@@ -268,5 +268,275 @@
         "Hunt for indicators of compromise using the Test-ProxyLogon script"
       ]
     }
+  },
+  {
+    "cve_id": "CVE-2023-44487",
+    "name": "HTTP/2 Rapid Reset",
+    "severity": "High",
+    "cvss_score": "7.5",
+    "vulnerability_type": "Denial of Service (DoS)",
+    "description": "The HTTP/2 protocol allows a denial of service (server resource consumption) via a stream cancellation attack.",
+    "root_cause": "Improper handling of RST_STREAM frames allowing rapid generation of requests without waiting for responses.",
+    "attack_flow": [
+      "Attacker opens a large number of HTTP/2 streams",
+      "Attacker immediately sends a RST_STREAM frame for each stream",
+      "The server processes the request but cancellation happens too fast for resource cleanup",
+      "Server CPU and memory are exhausted processing pending requests"
+    ],
+    "impact": "Service disruption and server unavailability.",
+    "risk_level": "High",
+    "fix": {
+      "patch": "Apply patches for web servers (Nginx, HAProxy, etc.).",
+      "configuration": "Limit the number of concurrent streams and RST frames per connection.",
+      "code_fix": "Not applicable",
+      "steps": [
+        "Update load balancers and web servers to latest versions",
+        "Implement rate limiting for RST_STREAM frames",
+        "Monitor connection state table sizes"
+      ]
+    }
+  },
+  {
+    "cve_id": "CVE-2023-3519",
+    "name": "Citrix NetScaler RCE",
+    "severity": "Critical",
+    "cvss_score": "9.8",
+    "vulnerability_type": "Remote Code Execution",
+    "description": "An unauthenticated remote code execution vulnerability in Citrix NetScaler ADC and Gateway.",
+    "root_cause": "Stack-based buffer overflow in the processing of authentication requests.",
+    "attack_flow": [
+      "Attacker sends a specially crafted authentication request",
+      "Large payload overflows the stack buffer during string processing",
+      "Attacker gains control of the instruction pointer",
+      "Arbitrary code execution with root privileges on the device"
+    ],
+    "impact": "Full takeover of the Citrix gateway and access to internal network.",
+    "risk_level": "Highest",
+    "fix": {
+      "patch": "Upgrade Citrix NetScaler ADC/Gateway to latest firmware.",
+      "configuration": "Disable unused gateway features.",
+      "code_fix": "Not applicable",
+      "steps": [
+        "Install critical security updates from Citrix",
+        "Check for indicators of compromise (web shells in /var/vpn/)",
+        "Rotate all credentials stored on the device"
+      ]
+    }
+  },
+  {
+    "cve_id": "CVE-2024-21887",
+    "name": "Ivanti Connect Secure RCE",
+    "severity": "Critical",
+    "cvss_score": "9.1",
+    "vulnerability_type": "Command Injection",
+    "description": "A command injection vulnerability in web components of Ivanti Connect Secure.",
+    "root_cause": "Insufficient sanitization of user-supplied parameters in the administrative web interface.",
+    "attack_flow": [
+      "Attacker authenticates (or bypasses via CVE-2023-46805)",
+      "Attacker sends a request with shell metacharacters in parameters",
+      "The server executes the injection via a system() call",
+      "Attacker gains persistent access as a root user"
+    ],
+    "impact": "Full compromise of VPN infrastructure and eavesdropping on sessions.",
+    "risk_level": "Critical",
+    "fix": {
+      "patch": "Apply the latest Ivanti security patches.",
+      "configuration": "Import the XML mititgation file provided by Ivanti.",
+      "code_fix": "Not applicable",
+      "steps": [
+        "Apply Ivanti vendor security updates",
+        "Run the Integrity Checker Tool provided by vendor",
+        "Monitor for unauthorized administrative logins"
+      ]
+    }
+  },
+  {
+    "cve_id": "CVE-2024-3094",
+    "name": "XZ Utils Backdoor",
+    "severity": "Critical",
+    "cvss_score": "10.0",
+    "vulnerability_type": "Supply Chain Backdoor",
+    "description": "A malicious backdoor was introduced into XZ Utils versions 5.6.0 and 5.6.1.",
+    "root_cause": "Sophisticated multi-year social engineering campaign targeting the project maintainer.",
+    "attack_flow": [
+      "Malicious code is hidden in binary test files during build time",
+      "The backdoor hijacks the RSA_public_decrypt function in sshd",
+      "Attacker sends a specific public key that triggers code execution",
+      "Unauthorized RCE/Authentication bypass on SSH servers"
+    ],
+    "impact": "Complete compromise of Linux distributions using the affected versions.",
+    "risk_level": "Highest",
+    "fix": {
+      "patch": "Downgrade XZ Utils to version 5.4.x.",
+      "configuration": "Not applicable",
+      "code_fix": "Not applicable",
+      "steps": [
+        "Audit systems for XZ Utils version 5.6.0/5.6.1",
+        "Force downgrade to a known good version (e.g. 5.4.6)",
+        "Check for binary mutations in the sshd process"
+      ]
+    }
+  },
+  {
+    "cve_id": "CVE-2024-23897",
+    "name": "Jenkins CLI File Read",
+    "severity": "High",
+    "cvss_score": "7.5",
+    "vulnerability_type": "Path Traversal / Info Leak",
+    "description": "The Jenkins CLI command parser allows unauthenticated users to read arbitrary files from the server.",
+    "root_cause": "The 'args4j' library used by Jenkins expands '@' followed by a file path into the file content.",
+    "attack_flow": [
+      "Attacker uses the Jenkins CLI with a payload like 'connect-node @/etc/passwd'",
+      "Jenkins expands the filename into its content during argument parsing",
+      "The file content is leaked in an error message or console output",
+      "Sensitive credentials or configuration details are exposed"
+    ],
+    "impact": "Theft of SSH keys, admin credentials, and confidential configs.",
+    "risk_level": "High",
+    "fix": {
+      "patch": "Upgrade Jenkins to 2.442 or LTS 2.426.3.",
+      "configuration": "Disable the CLI feature if not required.",
+      "code_fix": "Not applicable",
+      "steps": [
+        "Update Jenkins controller to the latest version",
+        "Disable access to the CLI via Global Security settings",
+        "Verify no sensitive files were accessed via logs"
+      ]
+    }
+  },
+  {
+    "cve_id": "CVE-2023-50164",
+    "name": "Apache Struts File Upload RCE",
+    "severity": "Critical",
+    "cvss_score": "9.8",
+    "vulnerability_type": "Remote Code Execution",
+    "description": "An attacker can manipulate file upload parameters to enable path traversal and achieve RCE.",
+    "root_cause": "Improper validation of parameter case and path traversal characters in file upload logic.",
+    "attack_flow": [
+      "Attacker sends a multipart/form-data request",
+      "Parameter name is manipulated using case variation (e.g., 'Upload')",
+      "Attacker uses ../ sequences in the filename",
+      "Malicious file is written to an executable directory (e.g., webapps)"
+    ],
+    "impact": "Remote code execution on the application server.",
+    "risk_level": "Highest",
+    "fix": {
+      "patch": "Upgrade to Apache Struts 2.5.33 or 6.3.0.2.",
+      "configuration": "Not applicable",
+      "code_fix": "Not applicable",
+      "steps": [
+        "Upgrade the Struts2 library in project dependencies",
+        "Restrict write permissions for the application user",
+        "Use a WAF to filter traversal patterns in filenames"
+      ]
+    }
+  },
+  {
+    "cve_id": "CVE-2023-46604",
+    "name": "Apache ActiveMQ RCE",
+    "severity": "Critical",
+    "cvss_score": "10.0",
+    "vulnerability_type": "Remote Code Execution",
+    "description": "An attacker with network access to the OpenWire port can execute arbitrary commands.",
+    "root_cause": "Insecure deserialization of OpenWire commands during transportation.",
+    "attack_flow": [
+      "Attacker connects to the ActiveMQ broker (Port 61616)",
+      "Attacker sends a malicious OpenWire command containing a class name",
+      "The broker instantiates the class using reflection",
+      "Arbitrary code is executed during instantiation"
+    ],
+    "impact": "Complete compromise of the message broker and hosted messages.",
+    "risk_level": "Extreme",
+    "fix": {
+      "patch": "Upgrade ActiveMQ to 5.17.6, 5.18.3, or 6.0.0.",
+      "configuration": "Block the OpenWire port from public access.",
+      "code_fix": "Not applicable",
+      "steps": [
+        "Update ActiveMQ distribution to a patched version",
+        "Enable authentication for all transport connectors",
+        "Audit broker for unauthorized web shells"
+      ]
+    }
+  },
+  {
+    "cve_id": "CVE-2023-41064",
+    "name": "NSO Pegasus Blastpass",
+    "severity": "High",
+    "cvss_score": "7.8",
+    "vulnerability_type": "Memory Corruption",
+    "description": "A buffer overflow in the ImageIO framework allows unauthenticated RCE via a malicious image.",
+    "root_cause": "Integer overflow in the parsing of maliciously crafted images.",
+    "attack_flow": [
+      "Attacker sends a malicious PassKit (.pkpass) attachment via iMessage",
+      "The device automatically processes the image attachment",
+      "Vulnerability triggers during ImageIO parsing",
+      "Zero-click installation of Pegasus spyware"
+    ],
+    "impact": "Silent surveillance and data theft from mobile devices.",
+    "risk_level": "Critical",
+    "fix": {
+      "patch": "Apply Apple security updates (iOS 16.6.1+).",
+      "configuration": "Enable Lockdown Mode on high-risk devices.",
+      "code_fix": "Not applicable",
+      "steps": [
+        "Install latest iOS and iPadOS updates",
+        "Enable Lockdown Mode for sensitive users",
+        "Monitor for suspicious outgoing network traffic"
+      ]
+    }
+  },
+  {
+    "cve_id": "CVE-2023-4863",
+    "name": "WebP Heap Buffer Overflow",
+    "severity": "High",
+    "cvss_score": "8.8",
+    "vulnerability_type": "Memory Corruption",
+    "description": "A heap buffer overflow in the libwebp library when processing lossless images.",
+    "root_cause": "Memory corruption during Huffman table construction for WebP images.",
+    "attack_flow": [
+      "Attacker creates a maliciously crafted WebP image",
+      "User opens the image in a browser or viewer using libwebp",
+      "Vulnerability triggers a heap overflow during decompression",
+      "Attacker achieves code execution within the application context"
+    ],
+    "impact": "Remote code execution in browsers, image viewers, and backend services.",
+    "risk_level": "High",
+    "fix": {
+      "patch": "Update libwebp to 1.3.2 or higher.",
+      "configuration": "Not applicable",
+      "code_fix": "Not applicable",
+      "steps": [
+        "Update all browsers (Chrome, Firefox, Safari)",
+        "Rebuild applications using affected libwebp versions",
+        "Patch OS-level image processing libraries"
+      ]
+    }
+  },
+  {
+    "cve_id": "CVE-2024-21626",
+    "name": "runc Container Escape",
+    "severity": "Critical",
+    "cvss_score": "8.6",
+    "vulnerability_type": "Container Escape",
+    "description": "An attacker can escape container isolation and gain host-level access.",
+    "root_cause": "Leaky file descriptor in runc allows access to the host file system during process startup.",
+    "attack_flow": [
+      "Attacker runs a malicious image or uses a specific working directory",
+      "runc inadvertently leaks an internal file descriptor (e.g. /proc/self/cwd)",
+      "Attacker uses the fd to access the host's /proc filesystem",
+      "Attacker gains full access to the host filesystem"
+    ],
+    "impact": "Full compromise of the container host and all other containers.",
+    "risk_level": "Extreme",
+    "fix": {
+      "patch": "Upgrade runc to version 1.1.12.",
+      "configuration": "Avoid running untrusted images as root.",
+      "code_fix": "Not applicable",
+      "steps": [
+        "Update Docker/Kubernetes runtime to use runc 1.1.12+",
+        "User user namespaces to mitigate impact of escapes",
+        "Scan container images for malicious 'WORKDIR' instructions"
+      ]
+    }
   }
 ]
