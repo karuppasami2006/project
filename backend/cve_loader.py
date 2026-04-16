@@ -33,7 +33,12 @@ async def enrich_cve_data(cve_data: Dict, ai_analyzer=None) -> Dict:
         context = cve_data['description']
         ai_summary = await ai_analyzer.analyze(prompt, context)
         
-        cve_data['ai_insights'] = ai_summary.get('explanation', "AI insights pending.")
+        cve_data['explanation'] = ai_summary.get('explanation', cve_data.get('description', "AI explanation pending."))
+        cve_data['solution'] = ai_summary.get('solution', "Manual review required.")
+        cve_data['attack_flow'] = ai_summary.get('exploit_scenario', [])
+        if isinstance(cve_data['attack_flow'], str):
+            cve_data['attack_flow'] = [cve_data['attack_flow']]
+            
         return cve_data
     except:
         return cve_data

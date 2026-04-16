@@ -265,14 +265,14 @@ export default function App() {
 
                          <div className="space-y-6">
                             <div className="glass-card p-6 border-white/5 bg-black/40 space-y-4">
-                               <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">Scientific Summary</p>
-                               <p className="text-sm font-medium leading-relaxed italic text-zinc-300">"{selectedCVE.description}"</p>
+                               <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">Explanation</p>
+                               <p className="text-sm font-medium leading-relaxed italic text-zinc-300">"{selectedCVE.explanation || selectedCVE.description}"</p>
                             </div>
 
                             <div className="glass-card p-6 border-white/5 bg-black/40 space-y-4">
                                <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">Neural Attack Flow</p>
                                <div className="space-y-4">
-                                  {selectedCVE.attack_flow.map((step, idx) => (
+                                  {(selectedCVE.attack_flow || []).map((step, idx) => (
                                      <div key={idx} className="flex gap-4">
                                         <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
                                         <p className="text-xs text-zinc-400 font-medium leading-relaxed">{step}</p>
@@ -284,10 +284,11 @@ export default function App() {
                             <div className="p-6 rounded-2xl border border-low/30 bg-low/5 space-y-4">
                                <div className="flex items-center gap-2">
                                   <CheckCircle2 size={16} className="text-low" />
-                                  <p className="text-[10px] font-black text-low uppercase tracking-widest">Remediation Blueprint</p>
+                                  <p className="text-[10px] font-black text-low uppercase tracking-widest">Solution</p>
                                </div>
                                <div className="space-y-3">
-                                  {selectedCVE.fix.steps.map((step, idx) => (
+                                  <p className="text-[11px] font-bold text-zinc-200">{selectedCVE.solution}</p>
+                                  {selectedCVE.fix?.steps && selectedCVE.fix.steps.map((step, idx) => (
                                      <p key={idx} className="text-[11px] font-bold text-zinc-400">✅ {step}</p>
                                   ))}
                                </div>

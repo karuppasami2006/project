@@ -14,11 +14,11 @@ Context: {context}
 
 Output ONLY JSON matching this structure:
 {{
-  "explanation": "Simple language explanation",
+  "explanation": "Simple language explanation of what this vulnerability is and why it matters.",
   "root_cause": "Architectural technical cause",
   "exploit_scenario": "Step-by-step attack flow",
   "fix_steps": ["step 1", "step 2"],
-  "remediation": "Technical fix recommendation"
+  "solution": "Technical fix recommendation and best practices to prevent this in the future."
 }}
 """
 
@@ -36,7 +36,7 @@ class AIAnalyzer:
                 "root_cause": "Detection based on static rules.",
                 "exploit_scenario": "Simulated exploit path.",
                 "fix_steps": ["Verify package versions", "Apply security patches"],
-                "remediation": "Manual review required."
+                "solution": "Manual review required. Please check official CVE references."
             }
 
         try:
